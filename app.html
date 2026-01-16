@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>小六口袋</title>
+  <style>
+    :root{--card-bg:#fff;--muted:#6b7280;--accent:#0a84ff;--shadow:0 8px 24px rgba(15,23,42,0.06)}
+    *{box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",Arial;margin:24px;background:#f5f7fb;color:#0f172a}
+    .card{max-width:860px;margin:0 auto;background:var(--card-bg);border-radius:12px;padding:20px;box-shadow:var(--shadow)}
+    .header{display:flex;align-items:center;gap:16px}
+    .icon{width:96px;height:96px;border-radius:18px;overflow:hidden;flex:0 0 96px;background:#eef2ff;display:flex;align-items:center;justify-content:center}
+    .icon img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block}
+    .title{font-size:20px;font-weight:700}
+    .desc{margin-top:14px;line-height:1.6;color:#334155}
+    .download{margin-top:6px;display:flex;justify-content:center}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(180deg,var(--accent),#0066d6);color:#fff;padding:10px 18px;border-radius:12px;text-decoration:none;font-weight:700;box-shadow:0 6px 18px rgba(10,132,255,0.18);border:none;cursor:pointer;min-width:180px;max-width:80%;transition:transform .12s ease,box-shadow .12s ease,opacity .12s ease;white-space:nowrap;margin-bottom:4px}
+    .btn:active{transform:translateY(1px)}.btn:focus{outline:3px solid rgba(10,132,255,0.14);outline-offset:2px}
+    @media(max-width:420px){.icon{width:72px;height:72px;flex:0 0 72px;border-radius:12px}.title{font-size:18px}.btn{min-width:140px;padding:10px 14px;border-radius:10px}}
+    .screens-wrap{margin-top:6px}
+    .screens-viewport{overflow:hidden;border-radius:12px;background:linear-gradient(180deg,#fbfdff,#f7fbff);padding:8px}
+    .screens{display:flex;gap:12px;transition:transform .2s ease;will-change:transform;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+    .shot{flex:0 0 auto;width:calc((100% - 24px)/3);max-width:320px;height:520px;border-radius:10px;overflow:hidden;background:#e9efff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(15,23,42,0.06);position:relative}
+    .shot img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;object-position:center;display:block;background:linear-gradient(180deg,#f8fbff,#eef6ff)}
+    @media(max-width:700px){.shot{width:100%;max-width:none;height:520px}.screens-viewport{padding:6px}}
+    @media(max-width:420px){.shot{height:460px;border-radius:8px}}
+    .dots{display:flex;gap:8px;justify-content:center;margin-top:8px}
+    .dot{width:8px;height:8px;border-radius:999px;background:#d1d5db;transition:transform .15s,background .15s}
+    .dot.active{background:var(--accent);transform:scale(1.3)}
+    .screens::-webkit-scrollbar{height:8px}.screens::-webkit-scrollbar-thumb{background:rgba(15,23,42,0.08);border-radius:8px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <div class="icon" aria-hidden="true">
+        <img src="logo.png" alt="應用圖示">
+      </div>
+      <div>
+        <div class="title">小六口袋</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:6px;">1.6.2</div>
+      </div>
+    </div>
+
+    <div class="desc">全网老司机福利软件破解合集－限时下载。（如果安装软件报毒）请把网络关闭或者开启飞行模式后，再去安装软件！</div>
+
+    <div class="download">
+      <a class="btn" id="downloadBtn" href="download.html">下 载 安 装</a>
+    </div>
+
+    <div class="screens-wrap" aria-label="應用截圖">
+      <div class="screens-viewport">
+        <div class="screens" id="screens">
+          <div class="shot"><img src="1.png" alt="截圖 1"></div>
+          <div class="shot"><img src="1.png" alt="截圖 2"></div>
+          <div class="shot"><img src="1.png" alt="截圖 3"></div>
+        </div>
+      </div>
+      <div class="dots" id="dots" aria-hidden="false">
+        <div class="dot active" data-index="0"></div>
+        <div class="dot" data-index="1"></div>
+        <div class="dot" data-index="2"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const sc = document.getElementById('screens');
+      const dots = Array.from(document.querySelectorAll('.dot'));
+      const shots = Array.from(document.querySelectorAll('.shot'));
+      if(!sc || shots.length===0) return;
+      let isDown=false, startX=0, current=0, gap=12;
+      const getWidth=()=> shots[0].getBoundingClientRect().width + gap;
+      const setIndex = i=>{
+        current = Math.max(0, Math.min(i, shots.length-1));
+        sc.style.transition = 'transform .2s ease';
+        sc.style.transform = `translateX(${ -current * getWidth() }px)`;
+        dots.forEach(d=>d.classList.toggle('active', Number(d.dataset.index)===current));
+      };
+      sc.addEventListener('pointerdown', e=>{ isDown=true; sc.setPointerCapture?.(e.pointerId); startX=e.clientX; sc.style.transition='none'; });
+      sc.addEventListener('pointermove', e=>{ if(!isDown) return; sc.style.transform = `translateX(${ -current*getWidth() + (e.clientX - startX) }px)`; });
+      sc.addEventListener('pointerup', e=>{ if(!isDown) return; isDown=false; const dx = e.clientX - startX; sc.style.transition=''; Math.abs(dx) > getWidth()*0.25 ? setIndex(dx<0?current+1:current-1) : setIndex(current); });
+      sc.addEventListener('pointercancel', ()=> setIndex(current));
+      sc.addEventListener('wheel', e=>{ if(Math.abs(e.deltaX) < Math.abs(e.deltaY)) return; e.preventDefault(); setIndex(e.deltaX>0?current+1:current-1); }, {passive:false});
+      dots.forEach(d=>d.addEventListener('click', ()=> setIndex(Number(d.dataset.index))));
+      window.addEventListener('resize', ()=> setIndex(current));
+      setIndex(0);
+    })();
+  </script>
+</body>
+</html>
